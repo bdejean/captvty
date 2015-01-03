@@ -1,0 +1,17 @@
+docker build -t captvty:base .
+
+xhost +local:
+
+1ère fois:
+	# docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -ti -u luser captvty:base ./dotnet_setup.sh
+	# docker commit <container_id> captvty:latest
+
+TODO: configurer le dossier de destination
+configurer dans les options "Téléchargement et nom de fichiers":
+- le dossier
+- supprimer les accents
+- créer un sous-dossier portant le nom de la chaine
+
+docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -ti -u luser captvty wine ./captvty/Captvty.exe
+
+
