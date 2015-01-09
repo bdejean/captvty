@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y -q	\
 	gawk					\
 	unzip					\
 	wine1.7					\
-	wget
+	wget					\
+	xvfb
 
 RUN apt-get -y -q clean
 RUN apt-get -y -q autoremove
@@ -55,18 +56,21 @@ ADD dotnet_setup.sh /home/luser/
 #
 RUN chown -R luser:luser /home/luser
 
-RUN apt-get install -y -q xvfb
+#
+# Install DotNet 4 and some stuff.
+# Uses xvfb as a DISPLAY is required.
+#
 USER luser
 ENV WINEARCH win32
-RUN xvfb winetricks -q dotnet40
+RUN xvfb-run winetricks -q dotnet40
 RUN wget http://captvty.fr/getgdiplus -O kb975337.exe
-RUN xvfb wine kb975337.exe /x:kb975337 /q
+RUN xvfb-run wine kb975337.exe /x:kb975337 /q
 RUN cp kb975337/asms/10/msft/windows/gdiplus/gdiplus.dll ~/.wine/drive_c/windows/system32
 RUN wine reg add HKCU\\Software\\Wine\\DllOverrides /v gdiplus /d native,builtin /f
-RUN xvfb winetricks -q comctl32
-RUN xvfb winetricks -q ie8 
+RUN xvfb-run winetricks -q comctl32
+RUN xvfb-run winetricks -q ie8 
 RUN wget http://captvty.fr/getflash -O fplayer.exe
-RUN xvfb wine fplayer.exe -install -au 2
+RUN xvfb-run wine fplayer.exe -install -au 2
 
 # 
 # RUN ls -lah /home/luser/wine /home/luser/captvty
