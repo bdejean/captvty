@@ -22,6 +22,12 @@ RUN apt-get -y -q clean
 RUN apt-get -y -q autoremove
 
 
+# Again as root since COPY doesn't honor USER
+COPY dotnet_setup.sh /tmp/
+RUN chmod a+rx /tmp/dotnet_setup.sh
+COPY captvty-2.3.4.zip /tmp/captvty.zip
+RUN chmod a+r /tmp/captvty.zip
+
 #
 # Create a user to run Captvty
 #
@@ -29,56 +35,34 @@ RUN useradd --home-dir /home/luser --create-home -K UID_MIN=42000 luser
 USER luser
 RUN echo "quiet=on" > ~/.wgetrc
 
-# Again as root since COPY doesn't honor USER
-USER root
+WORKDIR /tmp
+
+#
+# Install DotNet 4 and some stuff.
+# Uses xvfb as a DISPLAY is required.
+# Calling each action within a separate xvfb-run makes this fail
+# that's why a script is added and then run
+#
+RUN xvfb-run ./dotnet_setup.sh
+
 
 #
 # Install Captvty
 #
 RUN mkdir /home/luser/captvty
-WORKDIR /home/luser/captvty
 # RUN wget http://captvty.fr/?captvty-2.3.4.zip -O captvty.zip
+# RUN ls -lah /tmp
 # RUN sha1sum captvty.zip | awk '$1 != "c76393686877eaa9d159f2815a3ae47adb8a3a13" { print "Bad checksum"; exit 1; }'
-COPY captvty.zip /home/luser/captvty/captvty.zip
-RUN unzip captvty.zip
-RUN rm captvty.zip
+RUN unzip ./captvty.zip -d /home/luser/captvty
 
 
-
-#
-# Copy the script needed to setup Wine
-# it needs X so it can't be built
-#
-ADD dotnet_setup.sh /home/luser/
+RUN ls -lah /home/luser /home/luser/captvty
 
 #
-# Give everything to luser
+# Cleanup /tmp
 #
-RUN chown -R luser:luser /home/luser
-
-#
-# Install DotNet 4 and some stuff.
-# Uses xvfb as a DISPLAY is required.
-#
-USER luser
-ENV WINEARCH win32
-RUN xvfb-run winetricks -q dotnet40
-RUN wget http://captvty.fr/getgdiplus -O kb975337.exe
-RUN xvfb-run wine kb975337.exe /x:kb975337 /q
-RUN cp kb975337/asms/10/msft/windows/gdiplus/gdiplus.dll ~/.wine/drive_c/windows/system32
-RUN wine reg add HKCU\\Software\\Wine\\DllOverrides /v gdiplus /d native,builtin /f
-RUN xvfb-run winetricks -q comctl32
-RUN xvfb-run winetricks -q ie8 
-RUN wget http://captvty.fr/getflash -O fplayer.exe
-RUN xvfb-run wine fplayer.exe -install -au 2
-
-# 
-# RUN ls -lah /home/luser/wine /home/luser/captvty
-# 
-# 
-
+USER root
+RUN find /tmp -mindepth 1 -exec rm -rf {} +
 
 USER luser
-WORKDIR /home/luser
 # ENTRYPOINT wine /home/captvty/Captvty.exe
-
