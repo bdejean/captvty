@@ -1,9 +1,14 @@
-1) Build the image
-	# docker build -t captvty .
+0) Captvty is no free software but is free, please check its license at:
 
+	http://captvty.fr/
+
+1) Build the image
+
+	# docker build -t captvty .
 	# DEBUG: docker build --rm=false -t captvty .
 
 2) First launch and configuration
+
 	# xhost +local:
 	# docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix captvty
 
@@ -24,6 +29,7 @@ Captvty needs a writable directory (777) to save/export its downloads.
 For example you can use your /tmp.
 
 4) Now you can use captvty using:
+
 	# xhost +local:
 	# docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /tmp:/home/luser/downloads captvty
 
