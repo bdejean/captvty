@@ -1,5 +1,5 @@
 FROM ubuntu
-MAINTAINER Luc
+MAINTAINER Benoît Dejean <bdejean@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -17,10 +17,6 @@ RUN apt-get update && apt-get install -y -q	\
 	wine1.7					\
 	wget					\
 	xvfb
-
-RUN apt-get -y -q clean
-RUN apt-get -y -q autoremove
-
 
 # Again as root since COPY doesn't honor USER
 COPY dotnet_setup.sh /tmp/
@@ -59,10 +55,28 @@ RUN unzip ./captvty.zip -d /home/luser/captvty
 RUN ls -lah /home/luser /home/luser/captvty
 
 #
-# Cleanup /tmp
+# Cleanup
 #
 USER root
 RUN find /tmp -mindepth 1 -exec rm -rf {} +
+RUN apt-get purge -y -q				\
+	gawk					\
+	unzip					\
+	wget					\
+	xvfb
+
+RUN apt-get -y -q autoremove
+RUN apt-get -y -q clean
+
+# COPY entrypoint-captvty.sh /home/luser/
+# RUN chmod +rx /home/luser/entrypoint-captvty.sh
+# RUN chown luser:luser /home/luser/entrypoint-captvty.sh
+# ENTRYPOINT /home/luser/entrypoint-captvty.sh
 
 USER luser
+WORKDIR /home/luser
+RUN mkdir /home/luser/downloads
+
+CMD wine ./captvty/Captvty.exe >/dev/null 2>&1; rm -rf /tmp/.wine-*
+
 # ENTRYPOINT wine /home/captvty/Captvty.exe
