@@ -31,7 +31,7 @@ For example you can use your /tmp.
 4) Now you can use captvty using:
 
 	# xhost +local:
-	# docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /tmp:/home/luser/downloads captvty
+	# docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /tmp:/home/luser/downloads captvty
 
 
 
