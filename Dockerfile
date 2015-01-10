@@ -21,8 +21,6 @@ RUN apt-get update && apt-get install -y -q	\
 # Again as root since COPY doesn't honor USER
 COPY dotnet_setup.sh /tmp/
 RUN chmod a+rx /tmp/dotnet_setup.sh
-COPY captvty-2.3.4.zip /tmp/captvty.zip
-RUN chmod a+r /tmp/captvty.zip
 
 #
 # Create a user to run Captvty
@@ -46,9 +44,8 @@ RUN xvfb-run ./dotnet_setup.sh
 # Install Captvty
 #
 RUN mkdir /home/luser/captvty
-# RUN wget http://captvty.fr/?captvty-2.3.4.zip -O captvty.zip
-# RUN ls -lah /tmp
-# RUN sha1sum captvty.zip | awk '$1 != "c76393686877eaa9d159f2815a3ae47adb8a3a13" { print "Bad checksum"; exit 1; }'
+RUN wget http://captvty.fr/?captvty-2.3.4.zip -O captvty.zip
+RUN sha1sum captvty.zip | awk '$1 != "c76393686877eaa9d159f2815a3ae47adb8a3a13" { print "Bad checksum"; exit 1; }'
 RUN unzip ./captvty.zip -d /home/luser/captvty
 
 
