@@ -56,7 +56,7 @@ RUN ls -lah /home/luser /home/luser/captvty
 #
 USER root
 RUN find /tmp -mindepth 1 -exec rm -rf {} +
-RUN apt-get purge -y -q				\
+RUN apt-mark auto 				\
 	gawk					\
 	unzip					\
 	wget					\
