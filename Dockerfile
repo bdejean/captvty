@@ -49,8 +49,6 @@ RUN sha1sum captvty.zip | awk '$1 != "c76393686877eaa9d159f2815a3ae47adb8a3a13" 
 RUN unzip ./captvty.zip -d /home/luser/captvty
 
 
-RUN ls -lah /home/luser /home/luser/captvty
-
 #
 # Cleanup
 #
