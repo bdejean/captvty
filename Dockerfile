@@ -44,8 +44,8 @@ RUN xvfb-run ./dotnet_setup.sh
 # Install Captvty
 #
 RUN mkdir /home/luser/captvty
-RUN wget http://captvty.fr/?captvty-2.3.4.zip -O captvty.zip
-RUN sha1sum captvty.zip | awk '$1 != "c76393686877eaa9d159f2815a3ae47adb8a3a13" { print "Bad checksum"; exit 1; }'
+RUN wget http://captvty.fr/?captvty-2.3.4.1.zip -O ./captvty.zip
+RUN sha1sum captvty.zip | awk '$1 != "b1f8c36352581d05ff421b73e173cfa98a10f08a" { print "Bad checksum"; exit 1; }'
 RUN unzip ./captvty.zip -d /home/luser/captvty
 
 
