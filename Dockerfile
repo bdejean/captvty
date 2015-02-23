@@ -53,6 +53,7 @@ RUN unzip ./captvty.zip -d /home/luser/captvty
 #
 USER root
 RUN find /tmp -mindepth 1 -exec rm -rf {} +
+RUN rm -rf /home/luser/.cache
 RUN apt-mark auto 				\
 	gawk					\
 	unzip					\
