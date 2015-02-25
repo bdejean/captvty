@@ -46,7 +46,16 @@ RUN xvfb-run ./dotnet_setup.sh
 RUN mkdir /home/luser/captvty
 RUN wget http://captvty.fr/?captvty-2.3.4.2.zip -O ./captvty.zip && sha1sum captvty.zip | awk '$1 != "cd744f187b962e1c67e80d9710bc6bb8af3c2ec1" { print "Bad checksum"; exit 1; }'
 RUN unzip ./captvty.zip -d /home/luser/captvty
+# Set the download directory
+RUN mkdir /home/luser/downloads
 
+#
+# Install a default configuration
+#
+# RUN cat /home/luser/captvty/captvty.ini | uconv -f UTF-16LE | sed 's/DownloadDir=.*/DownloadDir=Z:\\home\\luser\\downloads\r/' | uconv -t UTF-16LE > /home/luser/captvty/captvty.ini.new && mv -f /home/luser/captvty/captvty.ini.new /home/luser/captvty/captvty.ini
+USER root
+COPY captvty.ini /home/luser/captvty/
+RUN chown luser:luser /home/luser/captvty/captvty.ini
 
 #
 # Cleanup
@@ -70,8 +79,6 @@ RUN apt-get -y -q clean
 
 USER luser
 WORKDIR /home/luser
-RUN mkdir /home/luser/downloads
-
 CMD wine ./captvty/Captvty.exe >/dev/null 2>&1; rm -rf /tmp/.wine-*
 
 # ENTRYPOINT wine /home/captvty/Captvty.exe
